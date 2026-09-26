@@ -16,15 +16,34 @@
   h1 { font-size:1.4rem; margin:0 0 8px; }
   p { margin:4px 0; color:var(--sub); }
   .en { margin-top:24px; }
+  [hidden] { display:none !important; }
+  #ok, #fail { max-width:480px; }
 </style>
 </head>
 <body>
   <img src="/logo.svg" alt="ggtkp">
-  <h1>E-posta adresiniz doğrulandı ✓</h1>
-  <p>Uygulamaya dönüp giriş yapabilirsiniz.</p>
-  <div class="en">
-    <h1>Your email is verified ✓</h1>
-    <p>You can return to the app and sign in.</p>
+  <div id="ok" hidden>
+    <h1>E-posta adresiniz doğrulandı ✓</h1>
+    <p>Uygulamaya dönüp giriş yapabilirsiniz.</p>
+    <div class="en">
+      <h1>Your email is verified ✓</h1>
+      <p>You can return to the app and sign in.</p>
+    </div>
   </div>
+  <div id="fail" hidden>
+    <h1>Bu bağlantı geçerli değil</h1>
+    <p>Bağlantının süresi dolmuş ya da daha önce kullanılmış olabilir. E-postanız zaten doğrulandıysa uygulamada giriş yapabilirsiniz; doğrulanmadıysa giriş ekranındaki "Doğrulama e-postasını tekrar gönder" bağlantısıyla yeni bir e-posta isteyin.</p>
+    <div class="en">
+      <h1>This link is not valid</h1>
+      <p>It may have expired or already been used. If your email is already verified, just sign in to the app; otherwise request a new email with "Resend verification email" on the sign-in screen.</p>
+    </div>
+  </div>
+  <script>
+    // Supabase, geçerli bağlantıda #access_token=...&type=signup, geçersizde #error=...&error_code=otp_expired ile yönlendirir
+    var q = new URLSearchParams(location.hash.slice(1) || location.search.slice(1));
+    var ok = !q.has('error') && (q.has('access_token') || q.get('type') === 'signup');
+    document.getElementById(ok ? 'ok' : 'fail').hidden = false;
+    history.replaceState(null, '', location.pathname); // token'ları adres çubuğundan kaldır
+  </script>
 </body>
 </html>
